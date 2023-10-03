@@ -1,2 +1,2 @@
-# Logik-labbar
+# Logic labs
 Axiomatica Logicae!
