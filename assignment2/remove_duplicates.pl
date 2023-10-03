@@ -37,4 +37,26 @@ list([H|T]) :- list(T).
 
 
 /* The goal of remove duplicate is take a list as input and return a new list 
+that contains all the unique elements from the input list, preserving the original 
+order. */
 
+remove_duplicates(InList, OutList) :-       % remove_duplicates/2 calls remove_duplicates/3 with and additional argument 
+    remove_duplicates(InList, [], OutList). % an empty list that is used to keep track of elements that have been seen so far 
+                                            % while traversing 'InList'
+
+remove_duplicates([], _, []).               % The first clause of remove_duplicates/3 is the base case,
+remove_duplicates([H|T], Seen, [H|OutT]) :-  
+    \+ memberchk(H, Seen),                  % remove_duplicates/3 deals with the case where the head H of InList has not been seen before (\+ memberchk(H, Seen)).
+    remove_duplicates(T, [H|Seen], OutT).
+remove_duplicates([H|T], Seen, OutList) :-
+    memberchk(H, Seen),
+    remove_duplicates(T, Seen, OutList).
+
+                % The third clause of remove_duplicates/3 handles the case where H has been seen before. 
+
+
+
+% Why remove_duplicates/2 could be referred to as a function:
+% In mathematical logic and computer science, a function is a relation that uniquely 
+% associates members of one set with members of another set. 
+% A function f from set A to set B assigns to each element x of A exactly one element y of B.
