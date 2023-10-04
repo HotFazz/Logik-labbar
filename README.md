@@ -2,6 +2,7 @@
 Axiomatica Logicae!
 
 Task:
+```pl
 % Labb i logikprogrammering, 
 % del av D1351 Logik för dataloger 2022
 % Thomas Sjöland, EECS/CS/SCS
@@ -179,3 +180,4 @@ list([H|T]) :- list(T).
 
 %	Lycka till!
 %	Thomas
+```
