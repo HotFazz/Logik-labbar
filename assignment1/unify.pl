@@ -20,7 +20,7 @@
 % If we break down this query 
 
 % T is unified with f(a, Y, Z), and is therfore bound to it
-% T is also bound to f(X,X,b), meaning that f(a,Y,Z) is unified with f(X,X,b) as they have the same functor and same number of aritry
+% T is also bound to f(X,X,b), meaning that f(a,Y,Z) is unified with f(X,X,b) as they have the same functor and arity
 % This in turn results in 
     % a being unified with X
     % Y being unified with X
