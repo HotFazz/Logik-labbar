@@ -2,7 +2,7 @@
 Axiomatica Logicae!
 
 Task:
-```pl
+```prolog
 % Labb i logikprogrammering, 
 % del av D1351 Logik för dataloger 2022
 % Thomas Sjöland, EECS/CS/SCS
