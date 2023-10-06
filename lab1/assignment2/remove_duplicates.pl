@@ -10,7 +10,7 @@
 % Den exakta definitionen av en lista är:
 
 list([]).
-list([H|T]) :- list(T).
+list([H|T]) :- list(T).         % For [H|T] to be a list, T (the tail) must also be a list.        
 
 % Vi vill definiera ett predikat som givet en lista som 
 % representerar en sekvens skapar en annan lista som 
