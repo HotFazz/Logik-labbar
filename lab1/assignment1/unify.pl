@@ -1,8 +1,5 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % uppgift 1	(4p)
 % unifiering
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 % Betrakta denna fråga till ett Prologsystem:
 %
@@ -19,11 +16,9 @@
 
 % If we break down this query 
 
-% T is unified with f(a, Y, Z), and is therfore bound to it
+% T is unified with f(a, Y, Z), and is therefore bound to it
 % T is also bound to f(X,X,b), meaning that f(a,Y,Z) is unified with f(X,X,b) as they have the same functor and arity
-% This in turn results in 
-    % a being unified with X
-    % Y being unified with X
-    % Z being unified with b
-
-
+% This in turn results in:
+% a being unified with X
+% Y being unified with X
+% Z being unified with b

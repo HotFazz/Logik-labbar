@@ -1,7 +1,5 @@
 % uppgift 3	(6p)
 % rekursion och backtracking  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 % Definiera predikatet partstring/3 som givet en lista som 
 % första argument genererar en lista F med längden L som 
@@ -18,7 +16,6 @@
 % eller också F=[1,2,3] och L=3
 % eller F=[2,3] och L=2 
 % osv.
-
 
 % Base case: An empty list has no part strings
 partstring([], _, []).

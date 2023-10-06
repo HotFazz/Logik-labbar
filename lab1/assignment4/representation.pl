@@ -1,7 +1,5 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% uppgift 4       (8p)
+% uppgift 4 (8p)
 % representation
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Du skall definiera ett program som arbetar med grafer.
 
@@ -15,7 +13,6 @@
 % att passera en nod mer än en gång går från nod A till nod B!
 % Finns det flera möjliga vägar skall de presenteras 
 % en efter en, om man begär det.
-
 
 % Example representation
 edge(a, b).

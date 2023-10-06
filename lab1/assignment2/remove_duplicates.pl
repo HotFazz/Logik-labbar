@@ -1,8 +1,5 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % uppgift 2 	(6p)
 % representation 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 % En lista är en representation av sekvenser där 
 % den tomma sekvensen representeras av symbolen []
@@ -14,7 +11,6 @@
 
 list([]).
 list([H|T]) :- list(T).
-
 
 % Vi vill definiera ett predikat som givet en lista som 
 % representerar en sekvens skapar en annan lista som 
@@ -36,9 +32,8 @@ list([H|T]) :- list(T).
 
 
 
-/* The goal of remove duplicate is take a list as input and return a new list 
-that contains all the unique elements from the input list, preserving the original 
-order. */
+% The goal of remove duplicate is take a list as input and return a new list that
+% contains all the unique elements from the input list, preserving the original order.
 
 remove_duplicates(InList, OutList) :-       % remove_duplicates/2 calls remove_duplicates/3 with and additional argument 
     remove_duplicates(InList, [], OutList). % an empty list that is used to keep track of elements that have been seen so far 
@@ -52,9 +47,7 @@ remove_duplicates([H|T], Seen, OutList) :-
     memberchk(H, Seen),
     remove_duplicates(T, Seen, OutList).
 
-                % The third clause of remove_duplicates/3 handles the case where H has been seen before. 
-
-
+% The third clause of remove_duplicates/3 handles the case where H has been seen before. 
 
 % Why remove_duplicates/2 could be referred to as a function:
 % In mathematical logic and computer science, a function is a relation that uniquely 
