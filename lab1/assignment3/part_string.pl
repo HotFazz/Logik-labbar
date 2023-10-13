@@ -17,20 +17,16 @@
 % eller F=[2,3] och L=2 
 % osv.
 
+
+
 % Base case: An empty list has no part strings
-partstring([], _, []).
+partstring(List, L, F) :-
+    append(_, Temporary, List),  % Ignore some elements at the begining, anonymous variable (_), including the empty set
+    append(F, _, Temporary),     % Capture the front of the resulting list
+    length(F, L).
 
-% A part string starting from the head of the list
-partstring([H|T], L, [H|Part]) :-
-    prefix_length([H|T], L, [H|Part]).
+    /* The append/3 predicate takes three lists. It checks if the third list (List) is formed by appending the first two lists.
 
-% Recurse to generate part strings starting from later in the list
-partstring([_|T], L, F) :-
-    partstring(T, L, F).
+    % partstring( [ 1, 2 , 3 , 4 ], L, F).
 
-% Helper predicate to get prefixes of a certain length
-prefix_length(List, 0, []).
-prefix_length([H|T], L, [H|Rest]) :-
-    L > 0,
-    L1 is L - 1,
-    prefix_length(T, L1, Rest).
+
