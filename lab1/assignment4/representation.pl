@@ -29,3 +29,6 @@ path(A, B, Visited, [A|Path]) :-
     edge(A, Next),
     \+ member(Next, Visited), % Ensure we don't visit a node twice
     path(Next, B, [Next|Visited], Path).
+
+
+% path(a, d, [a], P)
