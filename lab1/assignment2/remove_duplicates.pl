@@ -1,3 +1,4 @@
+% Authors: Avid Fayaz and Christofer Gärtner
 % uppgift 2 	(6p)
 % representation 
 

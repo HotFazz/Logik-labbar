@@ -1,3 +1,4 @@
+% Authors: Avid Fayaz and Christofer Gärtner
 % uppgift 3	(6p)
 % rekursion och backtracking  
 
