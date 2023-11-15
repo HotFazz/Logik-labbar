@@ -1,5 +1,5 @@
-Representing a step in the proof
-% step(Line, Statement, Rule, References).
+% Representing a step in the proof
+step(Line, Statement, Rule, References).
 
 % Natural deduction rules
 conjunction_intro(Step, Proof) :-
@@ -28,8 +28,8 @@ disjunction_intro2(Step, Proof) :-
     member(step(Line, Q, _, _), Proof),
     Step = step(_, _ | Q, '|I2', [Line]).
 
-
-disjunction_elim(Step, Proof) :-                %Am completely uncertain about this, so check with others about it
+% Completely uncertain about this, so check with others about it
+disjunction_elim(Step, Proof) :-
     step(_, _, '|E', [DisjLine, SubProof1, SubProof2]) = Step,
     member(step(DisjLine, P | Q, _, _), Proof),
     valid_subproof(P, R, SubProof1, Proof),
