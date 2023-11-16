@@ -1,134 +1,111 @@
-% Representing a step in the proof
-step(Line, Statement, Rule, References).
+% Proof Verification Entry Point
+check_proof_validity(Filename) :-
+    access_proof(Filename),
+    read(InitialPremises), read(TargetGoal), read(StepsOfProof),
+    end_proof_access,
+    (proof_is_valid(InitialPremises, TargetGoal, StepsOfProof) 
+        -> write("Proof is valid.\n")
+        ; write("Proof is not valid.\n"), false).
 
-% Natural deduction rules
-conjunction_intro(Step, Proof) :-
-    step(_, _, '&I', [Line1, Line2]) = Step,
-    member(step(Line1, P, _, _), Proof),
-    member(step(Line2, Q, _, _), Proof),
-    Step = step(_, P & Q, '&I', [Line1, Line2]).
+% Validating Entire Proof
+proof_is_valid(Premises, Goal, ProofSteps) :- steps_validation(Premises, Goal, ProofSteps, []).
 
-conjunction_elim1(Step, Proof) :-
-    step(_, _, '&E1', [Line]) = Step,
-    member(step(Line, P & _, _, _), Proof),
-    Step = step(_, P, '&E1', [Line]).
+% Final Step Validation
+steps_validation(Premises, Goal, [[_, Goal, RuleApplied]], AlreadyProven)
+   :- rule_application(RuleApplied, Premises, AlreadyProven, Goal).
 
-conjunction_elim2(Step, Proof) :-
-    step(_, _, '&E2', [Line]) = Step,
-    member(step(Line, _ & Q, _, _), Proof),
-    Step = step(_, Q, '&E2', [Line]).
+% Normal Step Validation
+steps_validation(Premises, Goal, [[LineNumber, TermEvaluated, RuleApplied]|OtherSteps], AlreadyProven)
+   :- rule_application(RuleApplied, Premises, AlreadyProven, TermEvaluated),
+      steps_validation(Premises, Goal, OtherSteps, [[LineNumber, TermEvaluated, RuleApplied]|AlreadyProven]).
 
-disjunction_intro1(Step, Proof) :-
-    step(_, _, '|I1', [Line]) = Step,
-    member(step(Line, P, _, _), Proof),
-    Step = step(_, P | _, '|I1', [Line]).
+% Entering with an Assumption
+steps_validation(Premises, Goal, [CurrentSection|OtherSteps], AlreadyProven)
+   :- CurrentSection = [FirstRow|RestOfSection],
+      FirstRow = [_, _, assumption],
+      (RestOfSection = [] ; proof_is_valid(Premises, _, RestOfSection, [FirstRow|AlreadyProven])),
+      steps_validation(Premises, Goal, OtherSteps, [CurrentSection|AlreadyProven]).
 
-disjunction_intro2(Step, Proof) :-
-    step(_, _, '|I2', [Line]) = Step,
-    member(step(Line, Q, _, _), Proof),
-    Step = step(_, _ | Q, '|I2', [Line]).
+%% Rules for Inference
+% Rule for Premise
+rule_application(premise, Premises, _, A) :- member(A, Premises).
 
-% Completely uncertain about this, so check with others about it
-disjunction_elim(Step, Proof) :-
-    step(_, _, '|E', [DisjLine, SubProof1, SubProof2]) = Step,
-    member(step(DisjLine, P | Q, _, _), Proof),
-    valid_subproof(P, R, SubProof1, Proof),
-    valid_subproof(Q, R, SubProof2, Proof),
-    Step = step(_, R, '|E', [DisjLine, SubProof1, SubProof2]).
+% Rule for Copy
+rule_application(copy(X), _, Proven, A) :- member([X, A, _], Proven).
 
-% Valid subproof
-valid_subproof(Assumption, Conclusion, SubProofLines, Proof) :-
-    % Extract the sub-proof using the line numbers in SubProofLines
-    extract_subproof(SubProofLines, Proof, SubProof),
-    % Check the first step of the sub-proof is an assumption of Assumption
-    SubProof = [step(_, Assumption, assumption, _) | _],
-    % Check the last step of the sub-proof concludes with Conclusion
-    last(SubProof, step(_, Conclusion, _, _)).
-    
-% Extract subproof
-extract_subproof(SubProofLines, Proof, SubProof) :-
-    % Implementation to extract the lines corresponding to SubProofLines from Proof
-    % ...
+% Rule for And Introduction
+rule_application(and_intro(X, Y), _, Proven, and(A, B))
+    :- member([X, A, _], Proven),
+       member([Y, B, _], Proven).
 
+% Rule for And Elimination 1
+rule_application(and_elim1(X), _, Proven, A)
+    :- member([X, and(A, _), _], Proven).
 
-implication_intro(Step, Proof) :-
-    step(_, _, '->I', [Start, End]) = Step,
-    member(step(Start, Assumption, assumption, _), Proof),
-    member(step(End, Conclusion, _, _), Proof),
-    Step = step(_, Assumption -> Conclusion, '->I', [Start, End]).
+% Rule for And Elimination 2
+rule_application(and_elim2(X), _, Proven, A)
+    :- member([X, and(_, A), _], Proven).
 
+% Rule for Or Introduction 1
+rule_application(or_intro1(X), _, Proven, or(A, _))
+    :- member([X, A, _], Proven).
 
-implication_elim(Step, Proof) :-
-    step(_, _, '->E', [Line1, Line2]) = Step,
-    member(step(Line1, P, _, _), Proof),
-    member(step(Line2, P -> Q, _, _), Proof),
-    Step = step(_, Q, '->E', [Line1, Line2]).
+% Rule for Or Introduction 2
+rule_application(or_intro2(X), _, Proven, or(_, A))
+    :- member([X, A, _], Proven).
 
+% Rule for Or Elimination
+rule_application(or_elim(X, Y, U, V, W), _, Proven, A)
+   :- member([X, or(B, C), _], Proven),
+      validate_box([Y, B, assumption], [U, A, _], Proven),
+      validate_box([V, C, assumption], [W, A, _], Proven).
 
-negation_intro(Step, Proof) :-
-    step(_, _, '~I', [Start, End]) = Step,
-    member(step(Start, Assumption, assumption, _), Proof),
-    member(step(End, contradiction, _, _), Proof),
-    Step = step(_, ~Assumption, '~I', [Start, End]).
+% Rule for Implication Introduction
+rule_application(imp_intro(X, Y), _, Proven, imp(A, B))
+   :- validate_box([X, A, assumption], [Y, B, _], Proven).
 
+% Rule for Implication Elimination
+rule_application(imp_elim(X, Y), _, Proven, B)
+    :- member([X, A, _], Proven),
+       member([Y, imp(A, B), _], Proven).
 
-% Negation Elimination (~E)     Check unsure!
-negation_elim(Step, Proof) :-
-    step(_, _, '~E', [Line1, Line2]) = Step,
-    member(step(Line1, P, _, _), Proof),
-    member(step(Line2, ~P, _, _), Proof),
-    Step = step(_, contradiction, '~E', [Line1, Line2]).
+% Rule for Negation Introduction
+rule_application(neg_intro(X, Y), _, Proven, neg(A))
+   :- validate_box([X, A, assumption], [Y, cont, _], Proven).
 
-contradiction_elim(Step, Proof) :-
-    step(_, _, '⊥E', [Line]) = Step,
-    member(step(Line, contradiction, _, _), Proof),
-    Step = step(_, _, '⊥E', [Line]).
+% Rule for Negation Elimination
+rule_application(neg_elim(X, Y), _, Proven, cont)
+    :- member([X, A, _], Proven),
+       member([Y, neg(A), _], Proven).
 
-double_negation_elim(Step, Proof) :-
-    step(_, _, '~~E', [Line]) = Step,
-    member(step(Line, ~~P, _, _), Proof),
-    Step = step(_, P, '~~E', [Line]).
+% Rule for Contradiction Elimination
+rule_application(cont_elim(X), _, Proven, _) :- member([X, cont, _], Proven).
 
-modus_tollens(Step, Proof) :-
-    step(_, _, 'MT', [Line1, Line2]) = Step,
-    member(step(Line1, P -> Q, _, _), Proof),
-    member(step(Line2, ~Q, _, _), Proof),
-    Step = step(_, ~P, 'MT', [Line1, Line2]).
+% Rule for Double Negation Introduction
+rule_application(negneg_intro(X), _, Proven, neg(neg(A)))
+    :- member([X, A, _], Proven).
+ 
+% Rule for Double Negation Elimination
+rule_application(negneg_elim(X), _, Proven, A)
+    :- member([X, neg(neg(A)), _], Proven).
 
-% Main proof checking function
-check_proof([], _).
-check_proof([Step | Rest], Proof) :-
-    step(_, _, Rule, _) = Step,
-    apply_rule(Rule, Step, Proof),
-    check_proof(Rest, Proof).
+% Rule for Modus Tollens
+rule_application(mt(X, Y), _, Proven, neg(A))
+    :- member([X, imp(A, B), _], Proven),
+       member([Y, neg(B), _], Proven).
 
-% Apply the appropriate rule
-apply_rule('&I', Step, Proof) :- conjunction_intro(Step, Proof).
-apply_rule('&E1', Step, Proof) :- conjunction_elim1(Step, Proof).
-apply_rule('&E2', Step, Proof) :- conjunction_elim2(Step, Proof).
-apply_rule('|I1', Step, Proof) :- disjunction_intro1(Step, Proof).
-apply_rule('|I2', Step, Proof) :- disjunction_intro2(Step, Proof).
-apply_rule('|E', Step, Proof) :- disjunction_elim(Step, Proof).
-apply_rule('->I', Step, Proof) :- implication_intro(Step, Proof).
-apply_rule('->E', Step, Proof) :- implication_elim(Step, Proof).
-apply_rule('~I', Step, Proof) :- negation_intro(Step, Proof).
-apply_rule('~E', Step, Proof) :- negation_elim(Step, Proof).
-apply_rule('⊥E', Step, Proof) :- contradiction_elim(Step, Proof).
-apply_rule('~~E', Step, Proof) :- double_negation_elim(Step, Proof).
-apply_rule('MT', Step, Proof) :- modus_tollens(Step, Proof).
-% Add more rules as necessary...
+% Rule for Proof by Contradiction
+rule_application(pbc(X, Y), _, Proven, A)
+   :- validate_box([X, neg(A), assumption], [Y, cont, _], Proven).
 
-% Final verification
-verify_proof(Proof) :-
-    last(Proof, step(_, Goal, _, _)),
-    check_proof(Proof, Proof),
+% Rule for Law of Excluded Middle
+rule_application(lem, _, _, or(A, neg(A))).
 
-% Additions to be made?
+%% Helper Functions
+validate_box(Start, End, Proven) :- member(Box, Proven),
+                                    Box = [Start|_],
+                                    append(_, [End], Box).
 
-% Sample proof (to be replaced with actual proof)
-sample_proof([step(1, p, assumption, []),
-              step(2, q, assumption, []),
-              step(3, p & q, '&I', [1, 2])]).
-
-% Example use
-% verify_proof(XXX).
+% Proof File Handling
+access_proof(FilePath) :- see(FilePath).
+end_proof_access :- seen.
