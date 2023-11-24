@@ -1,0 +1,2 @@
+[neg(and(p, q))].
+or(neg(p), neg(q)).
