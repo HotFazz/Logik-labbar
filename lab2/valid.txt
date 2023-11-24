@@ -1,5 +1,4 @@
-[neg(and(p, q))].
-or(neg(p), neg(q)).
+
 [
 [1, neg(and(p, q)), premise],
 [
