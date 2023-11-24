@@ -8,10 +8,11 @@ verify_proof(Filename) :-
         ; write("no\n"), false).
 
 % Validating Entire Proof
-is_proof_valid(Premises, Goal, Proof) :- validate_steps(Premises, Goal, Proof, []).
+is_proof_valid(Premises, Goal, Proof) % acts as a wrapper to start the recursive validation of the proof
+    :- validate_steps(Premises, Goal, Proof, []). %initilizes an empty list that will contain the proven steps
 
 % Final Step Validation
-validate_steps(Premises, Goal, [[_, Goal, AppliedRule]], Proven)
+validate_steps(Premises, Goal, [[_, Goal, AppliedRule]], Proven) %recursive function for validating each step in the proof
    :- validate_rule(AppliedRule, Premises, Proven, Goal).
 
 % Normal Step Validation
