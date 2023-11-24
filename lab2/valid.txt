@@ -1,0 +1,21 @@
+[neg(and(p, q))].
+or(neg(p), neg(q)).
+[
+[1, neg(and(p, q)), premise],
+[
+[2, p, assumption],
+[
+[3, q, assumption],
+[4, and(p, q), andint(2, 3)],
+[5, cont, negel(4, 1)]
+],
+[6, neg(q), negint(3, 5)],
+[7, or(neg(p), neg(q)), orint2(6)]
+],
+[
+[8, neg(p), assumption],
+[9, or(neg(p), neg(q)), orint1(8)]
+],
+[10, or(p, neg(p)), lem],
+[11, or(neg(p), neg(q)), orel(10, 2, 7, 8, 9)]
+].
