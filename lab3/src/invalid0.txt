@@ -1,0 +1,17 @@
+% No log in after log out.
+
+[[index, [logi]],
+ [logi, [logi, admin, us]],
+ [us, [logo]],
+ [admin, [us, logo]],
+ [logo, [index]]].
+
+[[index, []],
+ [logi, []],
+ [us, [le, up]],
+ [admin, [le, up, ap]],
+ [logo, [le]]].
+
+lo.
+
+ag(neg(le)).

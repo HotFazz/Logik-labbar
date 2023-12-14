@@ -1,0 +1,17 @@
+%checks that, from any state in the system, it is always possible to reach a state where either there is no logout enabled, or there is a user profile or admindex panel available.
+
+[[index, [logi]],
+ [logi, [logi, ad, us]],
+ [us, [logo]],
+ [ad, [us, logo]],
+ [logo, [index]]].
+
+[[index, []],
+ [logi, []],
+ [us, [le, up]],
+ [ad, [le, up, ap]],
+ [logo, [le]]].
+
+index.
+
+af(or(neg(le), or(ap, up))).
